@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Indefinitely write "I am alive!" to /tmp/my_process
+while true; do
+    echo "I am alive!" >> /tmp/my_process
+    sleep 2
+done
+
+#!/bin/bash
+
+# Check if a command line argument was provided
+if [ $# -eq 0 ]; then
+    echo "Usage: manage_my_process {start|stop|restart}"
+    exit 1
+fi
+
+# Get the PID from the PID file
+get_pid() {
+    cat /var/run/my_process.pid
+}
+
+# Start the process
+start() {
+    # Start the manage_my_process script in the background
+    ./manage_my_process &
+
+    # Save the PID of the manage_my_process script
+    echo $! > /var/run/my_process.pid
+
+    echo "manage_my_process started"
+}
+
+# Stop the process
+stop() {
+    # Kill the process
+    kill $(get_pid)
+
+    # Delete the PID file
+    rm /var/run/my_process.pid
+
+    echo "manage_my_process stopped"
+}
+
+# Restart the process
+restart() {
+    stop
+    start
+    echo "manage_my_process restarted"
+}
+
+# Call the appropriate function based on the command line argument
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "Usage: manage_my_process {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
