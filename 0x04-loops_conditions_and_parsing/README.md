@@ -1,1 +1,1 @@
-This is aproject on looping and parsing in general
+This is a project on loop and parsing
